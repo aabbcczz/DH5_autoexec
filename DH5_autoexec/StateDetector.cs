@@ -117,10 +117,10 @@ namespace DH5_autoexec
                     GameState.DialogDungeonCompleted,
                     new List<PixelColor>()
                     {
-                        new PixelColor(643, 222, 0xEEC929),
-                        new PixelColor(735, 209, 0xEEC929),
-                        new PixelColor(847, 225, 0xEEC929),
-                        new PixelColor(961, 245, 0xEEC929),
+                        new PixelColor(643, 155, 0xEEC929),
+                        new PixelColor(735, 143, 0xEEC929),
+                        new PixelColor(847, 160, 0xEEC929),
+                        new PixelColor(961, 180, 0xEEC929),
 
                     }),
 

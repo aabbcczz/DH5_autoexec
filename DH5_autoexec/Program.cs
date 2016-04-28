@@ -15,58 +15,73 @@ namespace DH5_autoexec
     {
         const int MaxSingleTaskTime = 120 * 1000;
 
-        static int _dungeonSequence = 0;
-
         static StateWaiter _stateWaiter = new StateWaiter();
+
+        static int _position;
+        static int _grade;
 
         static void Main(string[] args)
         {
             string target = "Dungeon Hunter 5.lnk";
 
-            int runCount = 20;
-
-            if (args.Length > 0)
+            if (args.Length < 4)
             {
-                runCount = int.Parse(args[0]);
+                Console.WriteLine("Invalid number of parameter");
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+                return;
             }
+
+            int runCount = int.Parse(args[0]);
 
             JobType job = JobType.DailyDungeon;
 
-            if (args.Length > 1)
+            if (string.Compare(args[1], "wanted") == 0)
             {
-                if (string.Compare(args[1], "wanted") == 0)
-                {
-                    job = JobType.Wanted;
-                }
-                else if (string.Compare(args[1], "dungeon") == 0)
-                {
-                    job = JobType.DailyDungeon;
-                }
-                else if (string.Compare(args[1], "element") == 0)
-                {
-                    job = JobType.ElementChallenge;
-                }
-                else if (string.Compare(args[1], "chest") == 0)
-                {
-                    job = JobType.OpenChest;
-                }
-                else
-                {
-                    Console.WriteLine("only support wanted, dungeon, element, chest as job type");
-                    Console.WriteLine("Press any key to exit");
-                    Console.ReadKey();
-                    return;
-                }
+                job = JobType.Wanted;
+            }
+            else if (string.Compare(args[1], "dungeon") == 0)
+            {
+                job = JobType.DailyDungeon;
+            }
+            else if (string.Compare(args[1], "element") == 0)
+            {
+                job = JobType.ElementChallenge;
+            }
+            else if (string.Compare(args[1], "chest") == 0)
+            {
+                job = JobType.OpenChest;
+            }
+            else
+            {
+                Console.WriteLine("only support wanted, dungeon, element, chest as job type");
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+                return;
             }
 
-            if (args.Length > 2)
+            _position = int.Parse(args[2]);
+
+            if (_position <= 0)
             {
-                target = args[2];
+                Console.WriteLine("position must be greater than 0");
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+                return;
+            }
+
+            _grade = int.Parse(args[3]);
+            if (_grade <= 0)
+            {
+                Console.WriteLine("grade must be greater than 0");
+                Console.WriteLine("Press any key to exit");
+                Console.ReadKey();
+                return;
             }
 
             if (job == JobType.OpenChest)
             {
-                OpenChest();
+                OpenChest(runCount);
                 return;
             }
 
@@ -83,7 +98,7 @@ namespace DH5_autoexec
             Console.ReadKey();
         }
 
-        static void OpenChest()
+        static void OpenChest(int runCount)
         {
             bool existsMainWindow = MainWindowUtility.ExistsMainWindow();
 
@@ -99,7 +114,7 @@ namespace DH5_autoexec
             }
 
             // open chest
-            for (int i = 0; i < 5000; ++i)
+            for (int i = 0; i < runCount; ++i)
             {
                 ScreenUtility.Click(177, 877);
 
@@ -188,11 +203,11 @@ namespace DH5_autoexec
 
             if (job == JobType.ElementChallenge)
             {
-                if (!CheatEngineUtility.EnableCheating())
-                {
-                    Console.WriteLine("Cheating is not enabled, can't run element challenging job");
-                    return;
-                }
+                //if (!CheatEngineUtility.EnableCheating())
+                //{
+                //    Console.WriteLine("Cheating is not enabled, can't run element challenging job");
+                //    return;
+                //}
             }
 
             if (!ScreenUtility.IsForegroundFullScreen())
@@ -241,54 +256,32 @@ namespace DH5_autoexec
             }
         }
 
-        static void EnterDailyDungeon()
+        static void EnterMatch()
         {
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Monday)
+            int position = _position;
+
+            if (position == 0)
             {
-                // slide to 熔铸辅助材料
+                Console.WriteLine("Invalid position 0");
+                return;
+            }
+
+            while (position > 2)
+            {
                 ScreenUtility.Drag(1500, 914, 1500, 314);
-                AutoItX.Sleep(1500);
-
-                // 星期一有水晶和熔铸，需要多滑动一次
-                //ScreenUtility.Drag(1500, 914, 1500, 314);
-                //AutoItX.Sleep(1500);
+                position--;
             }
-            else if (DateTime.Now.DayOfWeek == DayOfWeek.Tuesday)
+
+            if (position == 1)
             {
-                if (DateTime.Now.Hour < 13)
-                {
-                    // do nothing
-                }
-                else
-                {
-                    // slide to 禁忌材料
-                    ScreenUtility.Drag(1500, 914, 1500, 314);
-                    AutoItX.Sleep(1500);
-                }
+                ScreenUtility.Click(1500, 314);
             }
-
-            // enter 熔铸辅助材料
-            ScreenUtility.Click(1500, 914);
+            else if (position == 2)
+            {
+                ScreenUtility.Click(1500, 914);
+            }
         }
-
-        static void EnterWanted()
-        {
-            // slide to 通缉
-            //ScreenUtility.Drag(1500, 914, 1500, 314);
-            //AutoItX.Sleep(1500);
-            //ScreenUtility.Drag(1500, 914, 1500, 314);
-            //AutoItX.Sleep(1500);
-
-            // enter 通缉
-            ScreenUtility.Click(1500, 914);
-        }
-
-        static void EnterElementChallenge()
-        {
-            // enter element challenge
-            ScreenUtility.Click(1500, 314);
-        }
-
+ 
         static void SelectDungeonGrade(DayOfWeek weekday)
         {
             if (weekday == DayOfWeek.Sunday || weekday == DayOfWeek.Saturday)
@@ -296,97 +289,88 @@ namespace DH5_autoexec
                 throw new ArgumentOutOfRangeException();
             }
 
-            int order;
+            int grade = _grade;
+
             switch (weekday)
             {
                 case DayOfWeek.Monday:
-                    // 熔铸材料
-                    // click 专家
-                    ScreenUtility.Click(1478, 610);
-                    AutoItX.Sleep(1000);
-                    break;
+                    {
+                        int xCord = 1478;
+                        // 普通，困难，专家
+                        int[] yCords = new int[] { 310, 460, 610 };
 
+                        if (grade > yCords.Length)
+                        {
+                            grade = yCords.Length;
+                        }
+
+                        ScreenUtility.Click(xCord, yCords[grade - 1]);
+                        AutoItX.Sleep(1000);
+                        break;
+                    }
                 case DayOfWeek.Tuesday:
-                    if (DateTime.Now.Hour < 13)
                     {
-                        // still the 熔铸材料
-                        // click 专家
-                        ScreenUtility.Click(1478, 610);
-                        AutoItX.Sleep(1000);
-                    }
-                    else
-                    {
-                        // click 史诗
-                        ScreenUtility.Click(1478, 760);
-                        AutoItX.Sleep(1000);
-                    }
-                    break;
+                        int xCord = 1478;
+                        // 普通，困难，专家，史诗
+                        int[] yCords = new int[] { 310, 460, 610, 760 };
 
+                        if (grade > yCords.Length)
+                        {
+                            grade = yCords.Length;
+                        }
+
+                        ScreenUtility.Click(xCord, yCords[grade - 1]);
+                        AutoItX.Sleep(1000);
+                        break;
+                    }
                 case DayOfWeek.Wednesday:
-                    order = _dungeonSequence % 3;
-                    if (order >= 0)
                     {
-                        // click 困难
-                        //ScreenUtility.Click(1478, 460);
-                        //AutoItX.Sleep(1000);
-                    }
+                        int xCord = 1478;
+                        // 普通，困难，专家，史诗
+                        int[] yCords = new int[] { 310, 460, 610, 760 };
 
-                    if (order >= 0)
-                    {
-                        // click 专家
-                        //ScreenUtility.Click(1478, 610);
-                        //AutoItX.Sleep(1000);
-                    }
+                        if (grade > yCords.Length)
+                        {
+                            grade = yCords.Length;
+                        }
 
-                    if (order >= 0)
-                    {
-                        // click 史诗
-                        ScreenUtility.Click(1478, 760);
+                        ScreenUtility.Click(xCord, yCords[grade - 1]);
                         AutoItX.Sleep(1000);
+                        break;
                     }
-
-                    break;
                 case DayOfWeek.Thursday:
-                    //Thursday: 清流 320，烈焰440, 自然 560, 半影 680， 多彩810
-                    order = _dungeonSequence % 5;
+                    {
+                        //Thursday: 清流 320，烈焰440, 自然 560, 半影 680， 多彩810
+                        int xCord = 1478;
+                        int[] yCords = new int[5] { 320, 440, 560, 680, 810 };
 
-                    int xCord = 1478;
-                    int[] yCords = new int[5] { 320, 440, 560, 680, 810 };
+                        if (grade > yCords.Length)
+                        {
+                            grade = yCords.Length;
+                        }
 
-                    // 半影包含两个，要特殊处理
-                    int trueOrder = (order == 3 || order == 4) ? 3 : order;
-
-                    // 目前只刷多彩，刷其它水晶时候请注释这行
-                    trueOrder = 4;
-
-                    int yCord = yCords[trueOrder];
-
-                    ScreenUtility.Click(xCord, yCord);
-                    AutoItX.Sleep(1000);
-                    break;
+                        ScreenUtility.Click(xCord, yCords[grade - 1]);
+                        AutoItX.Sleep(1000);
+                        break;
+                    }
                 case DayOfWeek.Friday:
-                    // Friday
-                    order = _dungeonSequence % 2;
-
-                    if (order >= 0)
                     {
-                        // click 史诗
-                        ScreenUtility.Click(1478, 320);
-                        AutoItX.Sleep(1000);
-                    }
+                        int xCord = 1478;
+                        // 史诗, 传奇
+                        int[] yCords = new int[] { 320, 470 };
 
-                    if (order >= 1)
-                    {
-                        // click 传奇
-                        ScreenUtility.Click(1478, 470);
+                        if (grade > yCords.Length)
+                        {
+                            grade = yCords.Length;
+                        }
+
+                        ScreenUtility.Click(xCord, yCords[grade - 1]);
                         AutoItX.Sleep(1000);
+                        break;
                     }
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            _dungeonSequence++;
 
             // click 继续
             ScreenUtility.Click(1478, 920);
@@ -494,6 +478,11 @@ namespace DH5_autoexec
 
         }
 
+        static void TouchToContinue()
+        {
+            ScreenUtility.Click(1168, 985);
+        }
+
         static void RunDungeon()
         {
             var weekday = DateTime.Now.DayOfWeek;
@@ -518,7 +507,11 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.FightTypeSelection, GameState.DailyDungeon, EnterDailyDungeon, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(
+                GameState.FightTypeSelection, 
+                GameState.DailyDungeon,
+                EnterMatch,
+                MaxSingleTaskTime))
             {
                 return;
             }
@@ -535,7 +528,7 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime, TouchToContinue))
             {
                 return;
             }
@@ -565,7 +558,11 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.FightTypeSelection, GameState.WantedChallenge, EnterWanted, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(
+                GameState.FightTypeSelection, 
+                GameState.WantedChallenge,
+                EnterMatch,
+                MaxSingleTaskTime))
             {
                 return;
             }
@@ -595,7 +592,7 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime, TouchToContinue))
             {
                 return;
             }
@@ -633,7 +630,11 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.FightTypeSelection, GameState.ElementChallenge, EnterElementChallenge, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(
+                GameState.FightTypeSelection, 
+                GameState.ElementChallenge, 
+                EnterMatch,
+                MaxSingleTaskTime))
             {
                 return;
             }
@@ -655,7 +656,7 @@ namespace DH5_autoexec
                 return;
             }
 
-            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime))
+            if (!_stateWaiter.WaitForState(GameState.SelectPartner, GameState.Fighting, SelectPartner, MaxSingleTaskTime, TouchToContinue))
             {
                 return;
             }

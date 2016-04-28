@@ -15,7 +15,7 @@ namespace DH5_autoexec
             Detector = new StateDetector();
         }
 
-        public bool WaitForState(GameState currentState, GameState nextState, Action action, int waitTimeInMs)
+        public bool WaitForState(GameState currentState, GameState nextState, Action action, int waitTimeInMs, Action actionForUnknown = null)
         {
             DateTime startTime = DateTime.Now;
 
@@ -47,8 +47,14 @@ namespace DH5_autoexec
                     && currentState != GameState.Unknown
                     && action != null)
                 {
-                    Console.WriteLine("Execute action");
+                    Console.WriteLine("Execute action {0}", action);
                     action();
+                }
+
+                if (activeState == GameState.Unknown && actionForUnknown != null)
+                {
+                    Console.WriteLine("Execute action for unknown {0}", actionForUnknown);
+                    actionForUnknown();
                 }
 
                 var elapsedTime = DateTime.Now - startTime;
