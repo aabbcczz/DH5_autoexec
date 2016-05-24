@@ -154,7 +154,7 @@ namespace DH5_autoexec
                     GameState.DialogGiveUp,
                     new List<PixelColor>()
                     {
-                        new PixelColor(1323, 200, 0xF20B0B),
+                        new PixelColor(1323, 200, 0xF20C0C),
                         new PixelColor(810, 417, 0xF8F2EC),
                         new PixelColor(880, 439, 0xF8F2EC),
                     }),
@@ -259,7 +259,7 @@ namespace DH5_autoexec
                     {
                         new PixelColor(1624, 260, 0x808080),
                         new PixelColor(1638, 260, 0x808080),
-                        new PixelColor(58, 190, 0xA5FB29),
+                        new PixelColor(0, 0, PixelColor.SpecialColorForPredicator),
                     }),
 
                 Tuple.Create(
@@ -339,8 +339,45 @@ namespace DH5_autoexec
             return ((uint)AutoItX.PixelGetColor(x, y)) & 0x00FFFFFF;
         }
 
+        private static bool DetectSpecialState(int x, int y)
+        {
+            if (x == 0)
+            {
+                // for element challenge completed state.
+                int totalMatch = 0;
+                List<PixelColor> pixels = new List<PixelColor>()
+                {
+                    new PixelColor(1649, 854, PixelColor.SpecialColorForDetectingChange),
+                    new PixelColor(659, 136, PixelColor.SpecialColorForDetectingChange),
+                    new PixelColor(355, 408, PixelColor.SpecialColorForDetectingChange),
+                    new PixelColor(1308, 115, PixelColor.SpecialColorForDetectingChange),
+                    new PixelColor(1674, 371, PixelColor.SpecialColorForDetectingChange),
+                };
+
+                foreach (var pixel in pixels)
+                {
+                    if (FuzzyMatch(pixel.X, pixel.Y, pixel.Color))
+                    {
+                        totalMatch ++;
+                    }
+                }
+
+                if (totalMatch == 1)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static bool FuzzyMatch(int x, int y, uint color)
         {
+            if (color == PixelColor.SpecialColorForPredicator)
+            {
+                return DetectSpecialState(x, y);
+            }
+
             Point newPos = ScreenUtility.Convert(new Point(x, y));
 
             Console.WriteLine("<{0}, {1}> -> <{2}, {3}>", x, y, newPos.X, newPos.Y);

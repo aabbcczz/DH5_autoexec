@@ -10,6 +10,7 @@ namespace DH5_autoexec
     {
         public const uint SpecialColorForDetectingChange = 0x01234567;
         public const uint SpecialColorForDetectingUnchange = 0xFEDCBA98;
+        public const uint SpecialColorForPredicator = 0x13579BDF;
 
         public int X { get; private set; }
 

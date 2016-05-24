@@ -389,9 +389,9 @@ namespace DH5_autoexec
             AutoItX.Sleep(1000);
 
             // for rush
-            ScreenUtility.Click(1020, 920);
+            // ScreenUtility.Click(1020, 920);
             // click 开始游戏
-            //ScreenUtility.Click(1460, 920);
+            ScreenUtility.Click(1460, 920);
         }
 
         static void SelectElementChallenge()
