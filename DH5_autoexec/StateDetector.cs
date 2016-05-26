@@ -64,9 +64,9 @@ namespace DH5_autoexec
                     GameState.DialogAdvertisement,
                     new List<PixelColor>()
                     {
-                        new PixelColor(1424, 128, 0xA90606),
-                        new PixelColor(1442, 146, 0xF11D23),
-                        new PixelColor(1407, 144, 0x9F0002),
+                        new PixelColor(1321, 164, 0xF10A0A),
+                        new PixelColor(1310, 153, 0xF44745),
+                        new PixelColor(1332, 176, 0xFF3C39),
                     }),
 
                 Tuple.Create(

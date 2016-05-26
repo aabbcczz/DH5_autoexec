@@ -12,7 +12,7 @@ namespace DH5_autoexec
         public static Dictionary<GameState, Tuple<int, int>> _dialogs = 
             new Dictionary<GameState,Tuple<int,int>>()
             {
-                { GameState.DialogAdvertisement, Tuple.Create(1424, 128) },
+                { GameState.DialogAdvertisement, Tuple.Create(1321, 164) },
                 { GameState.DialogWarningOfDisconnect, Tuple.Create(853, 808) },
                 { GameState.DialogSendAllyRequest, Tuple.Create(670, 857) },
                 { GameState.DialogBuyEnergy1, Tuple.Create(1020, 813) },
