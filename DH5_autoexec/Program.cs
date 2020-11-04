@@ -100,18 +100,18 @@ namespace DH5_autoexec
 
         static void OpenChest(int runCount)
         {
-            bool existsMainWindow = MainWindowUtility.ExistsMainWindow();
+            //bool existsMainWindow = MainWindowUtility.ExistsMainWindow();
 
-            if (!existsMainWindow && !ScreenUtility.IsForegroundFullScreen())
-            {
-                Console.WriteLine("No main window exist");
-                return;
-            }
+            //if (!existsMainWindow && !ScreenUtility.IsForegroundFullScreen())
+            //{
+            //    Console.WriteLine("No main window exist");
+            //    return;
+            //}
 
-            if (existsMainWindow)
-            {
-                MainWindowUtility.ActivateAndWait();
-            }
+            //if (existsMainWindow)
+            //{
+            //    MainWindowUtility.ActivateAndWait();
+            //}
 
             // open chest
             for (int i = 0; i < runCount; ++i)
